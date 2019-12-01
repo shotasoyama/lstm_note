@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>lstm</name>
+  <name>lstm_note</name>
   <version>0.0.0</version>
   <description>The lstm package</description>
 

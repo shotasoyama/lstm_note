@@ -1,10 +1,4 @@
 <launch>
-	<include file="$(find raspimouse_ros_2)/launch/raspimouse.launch" />
-	<node pkg="joy" name="joy_node" type="joy_node" required="true">
-		<param name="autorepeat_rate" value="3" />
-	</node>
-	<node pkg="lstm" name="logicool" type="logicool.py" required="true" output="screen" />
-	<node pkg="lstm" name="logger" type="logger.py" required="true" output="screen" />
-	<node pkg="lstm" name="replay" type="replay.py" required="true" output="screen" />
+	<node pkg="lstm_note" name="replay" type="replay.py" required="true" output="screen" />
 </launch>
 

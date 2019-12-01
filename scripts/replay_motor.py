@@ -14,11 +14,11 @@ from raspimouse_ros_2.msg import LightSensorValues, ButtonValues, LedValues
 
 def event_callback(eve):
     e = eve
-    episodes = [e.right_forward, e.right_side, e.left_side, e.left_forward]
+    episode = [e.right_forward, e.right_side, e.left_side, e.left_forward,e.linear_x, e.angular_z]
     episodem = [e.linear_x, e.angular_z]
-    global historys
+    global history
     global historym
-    historys = np.vstack((historys, episodes))  
+    history = np.vstack((history, episode))  
     historym = np.vstack((historym, episodem)) 
 
       
@@ -27,7 +27,7 @@ def sensor_callback(messages):
     global sens
     sensor = [s.right_forward, s.right_side, s.left_side, s.left_forward]
     sens = np.vstack((sens, sensor))
-    sens = sens[1: 301,]
+    sens = sens[1: 101,]
 
 def button_callback(btn_msg):
     leds = LedValues()
@@ -37,44 +37,49 @@ def button_callback(btn_msg):
     led_pub.publish(leds)
     on = btn_msg
     if btn_msg.mid:
-        global historys
+        global history
         global model
         step = 1
-        size = len (historys)
+        size = len (history)
                
-        historys = historys.reshape(1,-1,4)
-        sen = historys[ : , step : step + 300, ]
+        history = history.reshape(1,-1,6)
+        sen = history[ : , step : step + 100, ]
         step += 1
         print sen
-        for i in range(size - 302):
-            temp = historys[ : , step : step + 300, ]
+        for i in range(size - 102):
+            temp = history[ : , step : step + 100, ]
             sen = np.vstack((sen, temp))
             step += 1
          
  #       model.add(LSTM(20,return_sequences=True,input_shape=(10, 4)))
-        model.add(LSTM(50,return_sequences=True,dropout=0.2,recurrent_dropout=0.2,input_shape=(300, 4)))
-        model.add(LSTM(100,return_sequences=True,dropout=0.2,recurrent_dropout=0.2,input_shape=(300, 4)))
+        model.add(LSTM(50,return_sequences=True,dropout=0.05,recurrent_dropout=0.05,input_shape=(100, 6)))
+        model.add(LSTM(100,return_sequences=True,dropout=0.05,recurrent_dropout=0.05,input_shape=(100, 6)))
   #      model.add(LSTM(50,return_sequences=True,input_shape=(10, 4)))
-        model.add(LSTM(50,dropout=0.2,recurrent_dropout=0.2))
+        model.add(LSTM(50,dropout=0.05,recurrent_dropout=0.05))
         model.add(Dense(2))
         model.compile(loss='mean_absolute_error', optimizer='adam', metrics=['accuracy'])
-        model.fit(sen, historym[301:size], epochs=10, batch_size=10)
+        model.fit(sen, historym[101:size], epochs=10, batch_size=10)
 
     if btn_msg.rear_toggle:
         global sens
+        global vel
         cmd = Twist()
-           
-        data = sens.reshape(1,-1,4)
+        
+        data = np.hstack((sens, vel))
+        data = data.reshape(1,-1,6)
         predicted = model.predict(data)
         cmd.linear.x = predicted[0][0]
         cmd.angular.z = predicted[0][1]
         pub.publish(cmd)
+        vel = np.vstack((vel, predicted))
+        vel = vel[1:101, ]
 
 if  __name__ == '__main__':
     rospy.init_node('replay')
-    sens = [[0]*4]*300
+    sens = [[0]*4]*100
+    vel = [[0]*2]*100
 
-    historys = [0, 0, 0, 0]
+    history = [0, 0, 0, 0, 0, 0]
     historym = [0, 0]
     
     sensor_values = LightSensorValues()
