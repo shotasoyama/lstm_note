@@ -1,4 +1,0 @@
-<launch>
-	<node pkg="lstm_note" name="replay" type="replay.py" required="true" output="screen" />
-</launch>
-
