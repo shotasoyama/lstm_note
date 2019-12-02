@@ -1,6 +1,6 @@
 # lstm_note
 
-Raspberry Pi 3B+用パッケージ パソコン側パッケージ
+Raspberry Pi 3B+用 パソコン側パッケージ
 raspi側には[こちら](https://github.com/shotasoyama/lstm_raspi)を入れてください。
 
 ## 動作環境
