@@ -27,7 +27,7 @@ def sensor_callback(messages):
     global sens
     sensor = [s.right_forward, s.right_side, s.left_side, s.left_forward]
     sens = np.vstack((sens, sensor))
-    sens = sens[1: 101,]
+    sens = sens[1: 301,]
 
 def button_callback(btn_msg):
     leds = LedValues()
@@ -43,22 +43,22 @@ def button_callback(btn_msg):
         size = len (history)
                
         history = history.reshape(1,-1,6)
-        sen = history[ : , step : step + 100, ]
+        sen = history[ : , step : step + 300, ]
         step += 1
         print sen
-        for i in range(size - 102):
-            temp = history[ : , step : step + 100, ]
+        for i in range(size - 302):
+            temp = history[ : , step : step + 300, ]
             sen = np.vstack((sen, temp))
             step += 1
          
 #        model.add(LSTM(20,return_sequences=True,dropout=0.05,recurrent_dropout=0.05,input_shape=(100, 6)))
 #        model.add(LSTM(50,return_sequences=True,dropout=0.05,recurrent_dropout=0.05,input_shape=(100, 6)))
-        model.add(LSTM(50,return_sequences=True,dropout=0.05,recurrent_dropout=0.05,input_shape=(100, 6)))
-        model.add(LSTM(100,return_sequences=True,dropout=0.05,recurrent_dropout=0.05,input_shape=(100, 6)))
+        model.add(LSTM(50,return_sequences=True,dropout=0.05,recurrent_dropout=0.05,input_shape=(300, 6)))
+        model.add(LSTM(100,return_sequences=True,dropout=0.05,recurrent_dropout=0.05,input_shape=(300, 6)))
         model.add(LSTM(50,dropout=0.05,recurrent_dropout=0.05))
         model.add(Dense(2))
         model.compile(loss='mean_absolute_error', optimizer='adam', metrics=['accuracy'])
-        model.fit(sen, historym[101:size], epochs=10, batch_size=32)
+        model.fit(sen, historym[301:size], epochs=10, batch_size=10)
 
     if btn_msg.rear_toggle:
         global sens
@@ -72,12 +72,12 @@ def button_callback(btn_msg):
         cmd.angular.z = predicted[0][1]
         pub.publish(cmd)
         vel = np.vstack((vel, predicted))
-        vel = vel[1:101, ]
+        vel = vel[1:301, ]
 
 if  __name__ == '__main__':
     rospy.init_node('replay')
-    sens = [[0]*4]*100
-    vel = [[0]*2]*100
+    sens = [[0]*4]*300
+    vel = [[0]*2]*300
 
     history = [0, 0, 0, 0, 0, 0]
     historym = [0, 0]
