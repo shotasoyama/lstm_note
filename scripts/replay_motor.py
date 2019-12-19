@@ -68,8 +68,8 @@ class Replay():
                 step += 1
             
             self.model = Sequential() 
-#            self.model.add(LSTM(50,return_sequences=True,dropout=0.05,recurrent_dropout=0.05,input_shape=(self.len_sequence, 6)))
-#            self.model.add(LSTM(50,return_sequences=True,dropout=0.05,recurrent_dropout=0.05,input_shape=(self.len_sequence, 6)))
+            self.model.add(LSTM(50,return_sequences=True,dropout=0.05,recurrent_dropout=0.05,input_shape=(self.len_sequence, 6)))
+            self.model.add(LSTM(50,return_sequences=True,dropout=0.05,recurrent_dropout=0.05,input_shape=(self.len_sequence, 6)))
             self.model.add(LSTM(50,dropout=0.05,recurrent_dropout=0.05))
             self.model.add(Dense(2))
             self.model.compile(loss='mean_absolute_error', optimizer='adam', metrics=['accuracy'])
